@@ -1,6 +1,7 @@
 #ifndef UAPI_MM
 #define UAPI_MM
 
+#include "mm.h"
 #include <stdint.h>
 // Initialization function
 void mm_init();

@@ -2,7 +2,7 @@
 #include <memory.h>
 #include <unistd.h> // For get page size
 #include <sys/mman.h> // for using mmap()
-//#include "mm.h"
+#include "mm.h"
 
 static size_t SYSTEM_PAGE_SIZE=0;
 static vm_page_for_families_t *first_vm_page_for_families=NULL; // holds first vm page (head of LL)
@@ -40,7 +40,7 @@ void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
 	vm_page_for_family_t *vm_page_for_family_curr=NULL;
 	vm_page_for_families_t *new_vm_page_for_families=NULL;
 
-	if(struct_size>SYSTEM_PAGE_SIZE){
+	if(size>SYSTEM_PAGE_SIZE){
 		printf("Error : %s() Structure %s size to large\n",__FUNCTION__,struct_name);
 		return;
 	}

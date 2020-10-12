@@ -1,10 +1,10 @@
 #ifndef MM_H
 #define MM_H
-
+#define MM_MAX_STRUCT_NAME 32
 
 typedef struct vm_page_family_{
 	char struct_name[MM_MAX_STRUCT_NAME];
-	uint32_t struct size;
+	uint32_t size;
 } vm_page_family_t;
 
 typedef struct vm_page_for_families_{
