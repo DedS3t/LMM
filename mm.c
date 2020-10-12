@@ -2,6 +2,7 @@
 #include <memory.h>
 #include <unistd.h> // For get page size
 #include <sys/mman.h> // for using mmap()
+#include <assert.h>
 #include "mm.h"
 
 static size_t SYSTEM_PAGE_SIZE=0;
@@ -37,7 +38,9 @@ static void mm_return_vm_page_to_kernel(void *vm_page,int units){
 }
 
 void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
-	vm_page_for_family_t *vm_page_for_family_curr=NULL;
+	vm_page_family_t *vm_page_family_curr=NULL;
+	//vm_page_for_families_t *vm_page_family_curr=NULL:
+
 	vm_page_for_families_t *new_vm_page_for_families=NULL;
 
 	if(size>SYSTEM_PAGE_SIZE){
@@ -48,7 +51,7 @@ void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
 		first_vm_page_for_families=(vm_page_for_families_t *)mm_get_new_vm_page_from_kernel(1);
 		first_vm_page_for_families->next=NULL;
 		strncpy(first_vm_page_for_families->vm_page_family[0].struct_name,struct_name, MM_MAX_STRUCT_NAME);
-		first_vm_page_for_families->vm_page_family[0].struct_size=struct_size;
+		first_vm_page_for_families->vm_page_family[0].struct_size=size;
 	}
 	uint32_t count=0;
 	ITERATE_PAGE_FAMILIES_BEGIN(first_vm_page_for_families,vm_page_family_curr){
@@ -67,7 +70,7 @@ void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
 	}
 
 	strncpy(vm_page_family_curr->struct_name,struct_name,MM_MAX_STRUCT_NAME);
-	vm_page_family_curr->struct_size=struct_size;
-	vm_page_family_curr->first_page=NULL;
+	vm_page_family_curr->struct_size=size;
+//	vm_page_family_curr->first_page=NULL;
 }
 
