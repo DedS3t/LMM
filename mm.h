@@ -3,7 +3,7 @@
 #define MM_MAX_STRUCT_NAME 32
 #include <stdint.h>
 
-typedef bool vm_bool_t;
+typedef enum {false,true} vm_bool_t;
 
 typedef struct vm_page_family_{
 	char struct_name[MM_MAX_STRUCT_NAME];
@@ -36,4 +36,9 @@ vm_page_family_t* lookup_page_family_by_name(char *struct_name);
 		curr->struct_size && count < MAX_FAMILIES_PER_VM_PAGE; \
 		curr++,count++){
 #define ITERATE_PAGE_FAMILIES_END(vm_page_for_families_ptr,curr) }} 
+
+#define offset_of(container_structure, field_name)  \
+    ((size_t)&(((container_structure *)0)->field_name))
+
+
 #endif
