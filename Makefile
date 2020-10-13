@@ -1,14 +1,20 @@
+OBJS	= mm.o testapp.o
+SOURCE	= mm.c testapp.c
+HEADER	= mm.h uapi_mm.h
+OUT	= test.exe
+CC	 = gcc
+FLAGS	 = -g -c -Wall
+LFLAGS	 = 
 
-CC = gcc
+all: $(OBJS)
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
-CFLAGS  = -g -Wall
+mm.o: mm.c
+	$(CC) $(FLAGS) mm.c 
 
-TARGET = manager
+testapp.o: testapp.c
+	$(CC) $(FLAGS) testapp.c 
 
-all: $(TARGET)
-
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
 
 clean:
-	$(RM) $(TARGET)
+	rm -f test.exe mm.o testapp.o

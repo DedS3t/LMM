@@ -10,6 +10,7 @@ static vm_page_for_families_t *first_vm_page_for_families=NULL; // holds first v
 
 void mm_init(){
 	SYSTEM_PAGE_SIZE=getpagesize();
+	printf("System Page Size is : %d\n",SYSTEM_PAGE_SIZE);
 } 
 
 // Function to request VM page from kernel
@@ -38,6 +39,8 @@ static void mm_return_vm_page_to_kernel(void *vm_page,int units){
 }
 
 void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
+	printf("New page Family creation started...\n Struct name is %s and size is %d\n",struct_name,size);
+	//return;
 	vm_page_family_t *vm_page_family_curr=NULL;
 	//vm_page_for_families_t *vm_page_family_curr=NULL:
 
@@ -52,15 +55,18 @@ void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
 		first_vm_page_for_families->next=NULL;
 		strncpy(first_vm_page_for_families->vm_page_family[0].struct_name,struct_name, MM_MAX_STRUCT_NAME);
 		first_vm_page_for_families->vm_page_family[0].struct_size=size;
+		return;
 	}
 	uint32_t count=0;
 	ITERATE_PAGE_FAMILIES_BEGIN(first_vm_page_for_families,vm_page_family_curr){
 		if(strncmp(vm_page_family_curr->struct_name,struct_name,MM_MAX_STRUCT_NAME)!=0){
 			count++;
 			continue;
-		}
-
-		assert(0);
+		}else{
+			//printf("Current is : %s and struct_name is %s\n",vm_page_family_curr->struct_name,struct_name);
+			//return;
+			assert(0);
+		}	
 	} ITERATE_PAGE_FAMILIES_END(first_vm_page_for_families,vm_page_family_curr);
 	if(count==MAX_FAMILIES_PER_VM_PAGE){
 		new_vm_page_for_families=(vm_page_for_families_t*)mm_get_new_vm_page_from_kernel(1);
@@ -72,5 +78,32 @@ void mm_instantiate_new_page_family(char *struct_name, uint32_t size){
 	strncpy(vm_page_family_curr->struct_name,struct_name,MM_MAX_STRUCT_NAME);
 	vm_page_family_curr->struct_size=size;
 //	vm_page_family_curr->first_page=NULL;
+}
+
+
+void mm_print_registered_page_families(){
+	vm_page_family_t *vm_page_family_curr = NULL;
+    vm_page_for_families_t *vm_page_for_families_curr = NULL;
+    for(vm_page_for_families_curr = first_vm_page_for_families;vm_page_for_families_curr;vm_page_for_families_curr = vm_page_for_families_curr->next){
+   	     ITERATE_PAGE_FAMILIES_BEGIN(vm_page_for_families_curr,vm_page_family_curr){
+            printf("Page Family : %s, Size = %u\n",
+                    vm_page_family_curr->struct_name,vm_page_family_curr->struct_size);
+        } ITERATE_PAGE_FAMILIES_END(vm_page_for_families_curr,vm_page_family_curr);
+    }
+
+}
+
+vm_page_family_t* lookup_page_family_by_name(char *struct_name){
+	vm_page_family_t *vm_page_family_curr=NULL;
+	vm_page_for_families_t *vm_page_for_families_curr=NULL;
+	for(vm_page_for_families_curr=first_vm_page_for_families;vm_page_for_families_curr;vm_page_for_families_curr=vm_page_for_families_curr->next){
+		ITERATE_PAGE_FAMILIES_BEGIN(first_vm_page_for_families,vm_page_family_curr){
+			if(strncmp(vm_page_family_curr->struct_name,struct_name,MM_MAX_STRUCT_NAME)==0){
+				return vm_page_family_curr;
+			}
+		} ITERATE_PAGE_FAMILIES_END(first_vm_page_for_families,vm_page_family_curr);
+	}	
+
+	return NULL;
 }
 

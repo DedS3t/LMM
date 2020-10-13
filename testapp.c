@@ -15,9 +15,12 @@ typedef struct student_{
 } student_t;
 
 int main(int argc, char **argv){
-	
+
 	mm_init();
+	
 	MM_REG_STRUCT(emp_t);
 	MM_REG_STRUCT(student_t);
+	mm_print_registered_page_families();
+	lookup_page_family_by_name("emp_t");
 	return 0;
 }
