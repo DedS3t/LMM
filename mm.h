@@ -3,7 +3,7 @@
 #define MM_MAX_STRUCT_NAME 32
 #include <stdint.h>
 
-typedef enum {false,true} vm_bool_t;
+typedef enum {MM_FALSE,MM_TRUE} vm_bool_t;
 
 typedef struct vm_page_family_{
 	char struct_name[MM_MAX_STRUCT_NAME];
@@ -40,5 +40,16 @@ vm_page_family_t* lookup_page_family_by_name(char *struct_name);
 #define offset_of(container_structure, field_name)  \
     ((size_t)&(((container_structure *)0)->field_name))
 
+#define MM_GET_PAGE_FROM_META_BLOCK(block_meta_data_ptr) \
+	((void*)((char*)block_meta_data_ptr-block_meta_data_ptr->offset))
+
+#define NEXT_META_BLOCK(block_meta_data_ptr) \
+	(block_meta_data_ptr->next_block)
+
+#define NEXT_META_BLOCK_BY_SIZE(block_meta_data_ptr) \
+	(block_meta_data_t*)((char*)(block_meta_data_ptr+1)+block_meta_data_ptr->block_size)
+
+#define PREV_META_BLOCK(block_meta_data_ptr) \
+	(block_meta_data_ptr->prev_block)
 
 #endif
